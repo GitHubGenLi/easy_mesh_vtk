@@ -605,7 +605,7 @@ def GetVTKTransformationMatrix(rotate_X=[-180, 180], rotate_Y=[-180, 180], rotat
     return matrix
 
     
-if __name__ == '__main__':
+#if __name__ == '__main__':
     
 #    # create a new mesh by loading a VTP file
 #    mesh = Easy_Mesh('Sample_010.vtp')

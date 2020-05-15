@@ -29,8 +29,6 @@ class Easy_Landmark(object):
         
         #read point arrays
         for i_attribute in range(self.vtkPolyData.GetPointData().GetNumberOfArrays()):
-#            print(self.vtkPolyData.GetPointData().GetArrayName(i_attribute))
-#            print(self.vtkPolyData.GetPointData().GetArray(i_attribute).GetNumberOfComponents())
             self.load_point_attributes(self.vtkPolyData.GetPointData().GetArrayName(i_attribute), self.vtkPolyData.GetPointData().GetArray(i_attribute).GetNumberOfComponents())
         
         
@@ -160,7 +158,6 @@ class Easy_Landmark(object):
         normal_vec = np.cross(v1, v2)/np.linalg.norm(np.cross(v1, v2))
 
         flipped_mesh_points = np.copy(easy_mesh.points)
-#        flipped_points = np.copy(self.points)
     
         #flip mesh points
         for idx in range(len(easy_mesh.points)):
@@ -203,27 +200,27 @@ class Easy_Landmark(object):
         writer.Write()
         
         
-if __name__ == '__main__':
+#if __name__ == '__main__':
     
-    # create a new set of landmarks by loading a VTP file
-    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
-    landmark.to_vtp('example_ld.vtp')
-    
-    # create a new set of landmarks by giving a numpy array
-    landmark2 = Easy_Landmark()
-    landmark2.points = np.array([[3, 10, 2], [0, 0, 5]])
-    landmark2.to_vtp('example_ld2.vtp')
-    
-    # transform a set of landmarks
-    matrix = GetVTKTransformationMatrix()
-    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
-    landmark.landmark_transform(matrix)
-    landmark.to_vtp('example_ld2.vtp')
-    
-    # flip landmarks based on a mesh
-    mesh = Easy_Mesh('A0_Sample_01.vtp')
-    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
-    landmark.landmark_reflection(mesh, ref_axis='x')
-    mesh.mesh_reflection(ref_axis='x')
-    mesh.to_vtp('flipped_example.vtp')
-    landmark.to_vtp('flipped_example_landmarks.vtp')
+#    # create a new set of landmarks by loading a VTP file
+#    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
+#    landmark.to_vtp('example_ld.vtp')
+#    
+#    # create a new set of landmarks by giving a numpy array
+#    landmark2 = Easy_Landmark()
+#    landmark2.points = np.array([[3, 10, 2], [0, 0, 5]])
+#    landmark2.to_vtp('example_ld2.vtp')
+#    
+#    # transform a set of landmarks
+#    matrix = GetVTKTransformationMatrix()
+#    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
+#    landmark.landmark_transform(matrix)
+#    landmark.to_vtp('example_ld2.vtp')
+#    
+#    # flip landmarks based on a mesh
+#    mesh = Easy_Mesh('A0_Sample_01.vtp')
+#    landmark = Easy_Landmark('A0_Sample_1_10_landmarks.vtp')
+#    landmark.landmark_reflection(mesh, ref_axis='x')
+#    mesh.mesh_reflection(ref_axis='x')
+#    mesh.to_vtp('flipped_example.vtp')
+#    landmark.to_vtp('flipped_example_landmarks.vtp')
