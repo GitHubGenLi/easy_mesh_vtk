@@ -172,6 +172,15 @@ class Easy_Mesh(object):
         self.point_attributes['Curvature'] = np.zeros([n_points, 1])
         for i in range(n_points):
             self.point_attributes['Curvature'][i] = curv.GetOutput().GetPointData().GetArray(0).GetValue(i)
+            
+    
+    def get_cell_curvatures(self, method='mean'):
+        self.get_point_curvatures(method=method)
+        self.cell_attributes['Curvature'] = np.zeros([self.cells.shape[0], 1])
+        for i_cell in range(self.cells.shape[0]):
+            p_idx = self.cell_ids[i_cell][:]
+            p_curv = self.point_attributes['Curvature'][p_idx]
+            self.cell_attributes['Curvature'][i_cell] = np.mean(p_curv)            
     
         
     def load_cell_attributes(self, attribute_name, dim):
@@ -293,7 +302,7 @@ class Easy_Mesh(object):
             displacement_map[i_cell, 0] = delx
             displacement_map[i_cell, 1] = dely
             displacement_map[i_cell, 2] = delz
-        self.cell_attributes['displacement_map'] = displacement_map
+        self.cell_attributes['Displacement_map'] = displacement_map
         
     
     def compute_cell_attributes_by_svm(self, given_cells, given_cell_attributes, attribute_name):
@@ -605,14 +614,15 @@ def GetVTKTransformationMatrix(rotate_X=[-180, 180], rotate_Y=[-180, 180], rotat
     return matrix
 
     
-#if __name__ == '__main__':
+if __name__ == '__main__':
     
-#    # create a new mesh by loading a VTP file
-#    mesh = Easy_Mesh('Sample_010.vtp')
-#    mesh.get_cell_edges()
-#    mesh.get_cell_normals()
-#    mesh.get_point_curvatures()
-#    mesh.to_vtp('example.vtp')
+    # create a new mesh by loading a VTP file
+    mesh = Easy_Mesh('Sample_010.vtp')
+    mesh.get_cell_edges()
+    mesh.get_cell_normals()
+    mesh.get_point_curvatures()
+    mesh.get_cell_curvatures()
+    mesh.to_vtp('example.vtp')
 #    
 #    # create a new mesh by loading a STL/OBJ file
 #    mesh = Easy_Mesh('Test5.stl')
