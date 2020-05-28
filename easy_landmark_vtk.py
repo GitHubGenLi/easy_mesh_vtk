@@ -5,7 +5,8 @@ import math
 from easy_mesh_vtk import *
 
 class Easy_Landmark(object):
-    def __init__(self, filename = None):
+    def __init__(self, filename = None, warning=False):
+        self.warning = warning
         self.reader = None
         self.vtkPolyData = None
         self.points = np.array([])
@@ -68,7 +69,8 @@ class Easy_Landmark(object):
                     self.point_attributes[attribute_name][i, 1] = self.vtkPolyData.GetPointData().GetArray(attribute_name).GetComponent(i, 1)
                     self.point_attributes[attribute_name][i, 2] = self.vtkPolyData.GetPointData().GetArray(attribute_name).GetComponent(i, 2)
         except:
-            print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
+            if self.warning:
+                print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
         
         
     def update_vtkPolyData(self):
@@ -104,7 +106,8 @@ class Easy_Landmark(object):
                 vtkPolyData.GetPointData().AddArray(point_attribute)
 #                vtkPolyData.GetPointData().SetVectors(cell_attribute)
             else:
-                print('Check attribute dimension, only support 1D, 2D, and 3D now')
+                if self.warning:
+                    print('Check attribute dimension, only support 1D, 2D, and 3D now')
         
         vtkPolyData.Modified()
         self.vtkPolyData = vtkPolyData
@@ -145,7 +148,8 @@ class Easy_Landmark(object):
             point2 = [xmin, ymax, zmin]
             point3 = [xmax, ymin, zmin]
         else:
-            print('Invalid ref_axis!')
+            if self.warning:
+                print('Invalid ref_axis!')
             
         #get equation of the plane by three points
         v1 = np.zeros([3,])

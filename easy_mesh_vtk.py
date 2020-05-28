@@ -7,8 +7,9 @@ from sklearn import svm
 import math
 
 class Easy_Mesh(object):
-    def __init__(self, filename = None):
+    def __init__(self, filename = None, warning=False):
         #initialize
+        self.warning = warning
         self.reader = None
         self.vtkPolyData = None
         self.cells = np.array([])
@@ -25,7 +26,8 @@ class Easy_Mesh(object):
             elif self.filename[-3:].lower() == 'obj':
                 self.read_obj(self.filename)
             else:
-                print('Not support file type')
+                if self.warning:
+                    print('Not support file type')
 
     
     def get_mesh_data_from_vtkPolyData(self):
@@ -150,7 +152,8 @@ class Easy_Mesh(object):
                     self.point_attributes[attribute_name][i, 1] = self.vtkPolyData.GetPointData().GetArray(attribute_name).GetComponent(i, 1)
                     self.point_attributes[attribute_name][i, 2] = self.vtkPolyData.GetPointData().GetArray(attribute_name).GetComponent(i, 2)
         except:
-            print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
+            if self.warning:
+                print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
         
     
     def get_point_curvatures(self, method='mean'):
@@ -199,7 +202,8 @@ class Easy_Mesh(object):
                     self.cell_attributes[attribute_name][i, 1] = self.vtkPolyData.GetCellData().GetArray(attribute_name).GetComponent(i, 1)
                     self.cell_attributes[attribute_name][i, 2] = self.vtkPolyData.GetCellData().GetArray(attribute_name).GetComponent(i, 2)
         except:
-            print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
+            if self.warning:
+                print('No cell attribute named "{0}" in file: {1}'.format(attribute_name, self.filename))
          
             
 #    def set_cell_labels(self, given_labels):
@@ -319,7 +323,8 @@ class Easy_Mesh(object):
             clf.fit(given_cells, given_cell_attributes)
             self.cell_attributes[attribute_name][:, 0] = clf.predict(self.cells)
         else:
-            print('Only support 1D attribute')
+            if self.warning:
+                print('Only support 1D attribute')
             
             
     def update_cell_ids_and_points(self):
@@ -340,8 +345,9 @@ class Easy_Mesh(object):
             self.cell_ids[i_count, 0] = np.argmax(counts0)
             self.cell_ids[i_count, 1] = np.argmax(counts1)
             self.cell_ids[i_count, 2] = np.argmax(counts2)
-            
-        print('Warning! self.cell_attributes are reset and need to be updated!')
+        
+        if self.warning:
+            print('Warning! self.cell_attributes are reset and need to be updated!')
         self.cell_attributes = dict() #reset
         self.point_attributes = dict() #reset
         self.update_vtkPolyData()
@@ -386,7 +392,8 @@ class Easy_Mesh(object):
                 vtkPolyData.GetPointData().AddArray(point_attribute)
 #                vtkPolyData.GetPointData().SetVectors(cell_attribute)
             else:
-                print('Check attribute dimension, only support 1D, 2D, and 3D now')
+                if self.warning:
+                    print('Check attribute dimension, only support 1D, 2D, and 3D now')
         
         #update cell_attributes
         for i_key in self.cell_attributes.keys():
@@ -411,7 +418,8 @@ class Easy_Mesh(object):
                 vtkPolyData.GetCellData().AddArray(cell_attribute)
 #                vtkPolyData.GetCellData().SetVectors(cell_attribute)
             else:
-                print('Check attribute dimension, only support 1D, 2D, and 3D now')
+                if self.warning:
+                    print('Check attribute dimension, only support 1D, 2D, and 3D now')
         
         vtkPolyData.Modified()
         self.vtkPolyData = vtkPolyData
@@ -425,7 +433,8 @@ class Easy_Mesh(object):
         decimate_reader.Update()
         self.vtkPolyData = decimate_reader.GetOutput()
         self.get_mesh_data_from_vtkPolyData()
-        print('Warning! self.cell_attributes are reset and need to be updated!')
+        if self.warning:
+            print('Warning! self.cell_attributes are reset and need to be updated!')
         self.cell_attributes = dict() #reset
         self.point_attributes = dict() #reset
     
@@ -436,14 +445,16 @@ class Easy_Mesh(object):
         elif method == 'butterfly':
             subdivision_reader = vtk.vtkButterflySubdivisionFilter()
         else:
-            print('Not a valid subdivision method')
+            if self.warning:
+                print('Not a valid subdivision method')
             
         subdivision_reader.SetInputData(self.vtkPolyData)
         subdivision_reader.SetNumberOfSubdivisions(num_subdivisions)
         subdivision_reader.Update()
         self.vtkPolyData = subdivision_reader.GetOutput()
         self.get_mesh_data_from_vtkPolyData()
-        print('Warning! self.cell_attributes are reset and need to be updated!')
+        if self.warning:
+            print('Warning! self.cell_attributes are reset and need to be updated!')
         self.cell_attributes = dict() #reset 
         self.point_attributes = dict() #reset
         
@@ -489,7 +500,8 @@ class Easy_Mesh(object):
             point2 = [xmin, ymax, zmin]
             point3 = [xmax, ymin, zmin]
         else:
-            print('Invalid ref_axis!')
+            if self.warning:
+                print('Invalid ref_axis!')
             
         #get equation of the plane by three points
         v1 = np.zeros([3,])
